@@ -42,9 +42,7 @@ def calcular_salario():
     data = request.get_json()
 
     salario = data.get('salario', 0)
-    aliquota_inss = data.get('aliquota_inss', '14%')
     aliquota_irpf = data.get('aliquota_irpf', 0.225)
-    inss_deducao = data.get('inss_deducao', 106.59)
     irpf_deducao = data.get('irpf_deducao', 675.49)
     beneficios = data.get('beneficios', 0)
     descontos = data.get('descontos', 0)
