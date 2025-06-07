@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Salário CLT</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 80vh;
+            margin: auto;
+            padding: 2rem;
+        }
+
+        .form {
+
+
+            margin: auto;
+            padding: 2rem;
+        }
+
+
+        label {
+            display: flex;
+            flex-direction: column;
+            margin-top: 1rem;
+        }
+
+        input {
+
+            padding: 0.5rem;
+            margin-top: 0.2rem;
+        }
+
+        button {
+            margin-top: 1.5rem;
+            padding: 0.7rem;
+            width: 100%;
+        }
+
+        .resultado {
+            margin-top: 2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <h1>Calculadora CLT</h1>
+
+    <label>Salário:
+        <input type="number" id="salario" step="0.01" placeholder="Ex: 5000" />
+    </label>
+
+    <!-- <label>Alíquota INSS:
+        <input type="text" id="aliquota_inss" value="14%" />
+    </label> -->
+
+    <label>Alíquota IRPF:
+        <input type="number" id="aliquota_irpf" step="0.001" placeholder="0.225 para 22.5%" />
+    </label>
+
+    <label>Dedução IRPF:
+        <input type="number" id="irpf_deducao" step="0.01"
+            placeholder="Ex: 675.49 equivalente a parcela a deduzir da faixa" />
+    </label>
+
+    <label>Benefícios:
+        <input type="number" id="beneficios" step="0.01" placeholder="VA + VR + VT..." />
+    </label>
+
+    <label>Descontos:
+        <input type="number" id="descontos" step="0.01" placeholder="Descontos de beneficios" />
+    </label>
+
+    <button onclick="calcularSalario()">Calcular</button>
+
+    <pre class="resultado" id="resultado"></pre>
+
+
+    <img src="https://www.gov.br/planalto302/pt-br/acompanhe-o-planalto/noticias/2025/04/nova-tabela-do-imposto-de-renda-comeca-a-valer-em-maio-veja-o-que-muda/tabela-atualizada-do-imposto-de-renda.jpg/@@images/74640067-d778-4f3e-b1b7-0bdb96dff6ff.jpeg"
+        alt="Tabela-atualizada-do-Imposto-de-Renda.jpg" height="auto" width="100%">
+    </div>
+
+    <script>
+        async function calcularSalario() {
+            const data = {
+                salario: parseFloat(document.getElementById('salario').value) || 0,
+                //aliquota_inss: document.getElementById('aliquota_inss').value || '14%',
+                aliquota_irpf: parseFloat(document.getElementById('aliquota_irpf').value) || 0.225,
+                //inss_deducao: parseFloat(document.getElementById('inss_deducao').value) || 106.59,
+                irpf_deducao: parseFloat(document.getElementById('irpf_deducao').value) || 675.49,
+                beneficios: parseFloat(document.getElementById('beneficios').value) || 0,
+                descontos: parseFloat(document.getElementById('descontos').value) || 0
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/calcular-salario', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                let html = "";
+                for (const key in result) {
+                    html += `<p>${key[0].toUpperCase() + key.replace("_", " ").slice(1)  }: ${result[key].toFixed(2)}</p>`;
+                }
+                document.getElementById("resultado").innerHTML = html;
+            } catch (error) {
+                document.getElementById('resultado').innerText = 'Erro na requisição: ' + error;
+            }
+        }
+    </script>
+</body>
+
+</html>
